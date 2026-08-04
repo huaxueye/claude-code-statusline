@@ -1,0 +1,21 @@
+# Secrets — never commit real credentials
+.env
+settings.json
+*.pem
+*.key
+
+# Local usage database & trackers
+~/.claude-cost-tracker/
+*.db
+*.db-wal
+*.db-shm
+
+# Runtime artifacts
+*.cache
+__pycache__/
+*.pyc
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

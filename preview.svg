@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="36" viewBox="0 0 1100 36">
+  <rect width="1100" height="36" rx="6" fill="#1e1e2e"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14">
+    <text x="16" y="23" font-weight="bold" fill="#cdd6f4">deepseek-v4-pro</text>
+    <text x="158" y="23" fill="#6c7086">·high</text>
+    <text x="205" y="23" fill="#585b70">│</text>
+    <text x="220" y="23" fill="#89b4fa">█████▊</text>
+    <text x="305" y="23" fill="#45475a">░░░░</text>
+    <text x="348" y="23" fill="#89b4fa"> 58%</text>
+    <text x="393" y="23" fill="#6c7086">580K/1000K</text>
+    <text x="475" y="23" fill="#585b70">│</text>
+    <text x="490" y="23" fill="#a6adc8">[24h]</text>
+    <text x="550" y="23" fill="#74c7ec">I23.9M</text>
+    <text x="620" y="23" fill="#cba6f7">Out545K</text>
+    <text x="710" y="23" fill="#a6e3a1">R124.0M</text>
+    <text x="790" y="23" fill="#a6e3a1">↺ 84%</text>
+    <text x="855" y="23" fill="#f9e2af">¥78.0</text>
+    <text x="910" y="23" fill="#585b70">│</text>
+    <text x="925" y="23" fill="#6c7086">[N]</text>
+    <text x="958" y="23" fill="#cdd6f4">1967</text>
+    <text x="1000" y="23" fill="#6c7086">[Rules] 0 [MCP] 1</text>
+  </g>
+</svg>

@@ -1,0 +1,20 @@
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://your-relay.example.com",
+    "ANTHROPIC_AUTH_TOKEN": "sk-YOUR-API-KEY-HERE",
+    "ANTHROPIC_MODEL": "your-model",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "your-model",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "your-model",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "your-model",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "your-model",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "CLAUDE_CODE_EFFORT_LEVEL": "high",
+    "API_TIMEOUT_MS": "600000"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python3 ~/.claude/statusline.py"
+  },
+  "theme": "dark",
+  "skipWorkflowUsageWarning": true
+}
