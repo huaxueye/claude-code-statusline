@@ -76,8 +76,23 @@ If `~/.claude/tips/random_tip.py` exists, the terminal title is refreshed with a
 
 - `statusline.py` reads the JSON object CC pipes to it on **stdin**, renders one line, then writes it to **stdout**.
 - Cumulative stats (tokens/cost per session) are persisted to `~/.claude-cost-tracker/usage.db` (throttled to 30s) via `_snapshot()`.
-- The current session's numbers are always taken live from CC + the transcript, so nothing looks stale mid-conversation.
+- The current session's numbers are always taken live from the transcript (the authoritative token source) + the DB, so nothing looks stale mid-conversation.
 - All file paths use `~` — no absolute user paths are hardcoded.
+
+> **Note:** CC's `context_window.total_*` fields under-report tokens (output is
+> frequently ~0). This status line therefore reads token counts from the session
+> transcript (`message.usage`) instead, and writes those authoritative values to
+> the DB.
+
+### Tools
+
+- `tools/backfill_usage.py` — if you previously ran a version that stored CC's
+  under-reported token counts, run this once to recompute every session's
+  in/out/cache from its transcript and correct historical rows:
+
+  ```bash
+  python3 tools/backfill_usage.py
+  ```
 
 ## Security
 

@@ -331,12 +331,9 @@ def _snapshot(d):
     except: pass
     try:
         mid = d.get("model", {}).get("id", "")
-        cw = d.get("context_window", {})
-        total_in  = cw.get("total_input_tokens", 0)
-        total_ou  = cw.get("total_output_tokens", 0)
-        # CC does not expose cumulative cache in the statusline JSON, but the
-        # transcript records per-request usage → accumulate it there.
-        _, _fi, cache_sum, _o = _transcript_stats(d.get("transcript_path", ""))
+        # CC's context_window.total_* under-reports tokens (output often ~0),
+        # so the transcript is the authoritative source for in/out/cache.
+        _, total_in, cache_sum, total_ou = _transcript_stats(d.get("transcript_path", ""))
         c, _ = _compute_cost_db(total_in, total_ou, mid, cache_sum)
         if c is None: c = d.get("cost", {}).get("total_cost_usd", 0)
         conn = sqlite3.connect(DB_PATH); conn.execute("PRAGMA journal_mode=WAL")
@@ -410,16 +407,17 @@ period = _read_period()
 _, period_label = PERIODS.get(period, PERIODS["24h"])
 turn_in, turn_cache, live_cache_pct = _live_cache(d)
 
-# Live current-session values (always up-to-date, no throttle)
+# Live current-session values (always up-to-date, no throttle).
+# Transcript is the authoritative token source: CC's context_window.total_*
+# under-reports (output is frequently ~0), so don't trust it for in/out.
 live_sid = d.get("session_id", "")
-live_in  = cw.get("total_input_tokens", 0)
-live_out = cw.get("total_output_tokens", 0)
+_turns, _t_in, _t_cache, _t_out = _transcript_stats(transcript_path)
+live_in  = _t_in
+live_out = _t_out
 
-# DB query: sum all sessions EXCEPT current (avoids staleness)
-# then add live current-session values on top
+# DB query: sum all sessions EXCEPT current (avoids staleness).
+# display_in/out/cache computed in Group 3 (DB + current transcript).
 db_in, db_out, _db_cache, db_cost, _db_sessions = _query_period(period, exclude_sid=live_sid)
-display_in  = db_in  + live_in
-display_out = db_out + live_out
 
 # ── Group 1: identity ────────────────────────────────────────────────
 group_identity = []
@@ -459,12 +457,12 @@ if cs:
 # ── Group 3: multi-period usage summary ───────────────────────────────
 group_cost = []
 group_cost.append(f"\033[38;5;117m[{period_label}]{RESET}")
-# Current-session cache from transcript (cumulative), overlays on DB
-_, _t_in, _t_cache, _t_out = _transcript_stats(transcript_path)
-# cache from other sessions (DB) + current session (transcript)
+# Current-session in/out/cache all come from the transcript (authoritative);
+# other sessions come from the DB. Cache: DB(others) + transcript(current).
 display_cache = _db_cache + _t_cache
-# fresh-in consistency: use DB+live total for I (CC-authoritative), but keep
-# transcript cache. Hit-rate over the period = cache / (cache + fresh).
+display_in  = db_in  + _t_in
+display_out = db_out + _t_out
+# Hit-rate over the period = cache / (cache + fresh-in).
 hit24 = round(display_cache / max(display_in + display_cache, 1) * 100) if display_in + display_cache > 0 else 0
 if hit24 >= 80:   c_cache = "\033[38;5;42m"
 elif hit24 >= 50: c_cache = "\033[38;5;220m"
